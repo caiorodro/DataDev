@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
+
+    <link href="assets/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/plugins/datatables/select.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/util.css" rel="stylesheet" type="text/css" />
+
+    <link href="assets/plugins/fileuploads/css/dropify.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="assets/js/modernizr.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container-fluid" style="vertical-align: top; background-color: transparent;">
+        <br />
+        <div class="col-sm-12">
+            <form id="form1" action="#" data-parsley-validate novalidate>
+                <div class="row">
+                    <div class="col-sm-5">
+                        <label>(.zip | .rar) CAGED, CGIL-UTF-8, CTPS, RAIS, SISMIGRA_ENTRADA SISMIGRA_REGISTRO, STI_ANO_UTF8</label>
+                        <input class="dropify" type="file" accept=".zip,.rar" multiple id="csvFile" name="csvFile" data-height="300" /><br>
+                        <button id="BTN_UPLOAD" class="btn btn-purple btn-rounded waves-effect waves-light" onclick="uploadFiles();"
+                            style="width: 100%;">
+                            Confirmar upload &nbsp;&nbsp;<i class="mdi mdi-cloud-upload"></i>
+                        </button>
+                    </div>
+                    <div class="col-sm-7">
+                        <table id="tbFile" class="table table-bordered" cellspacing="0" style="width: 100%;
+                            background-color: white;">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th style="width: 15%;">ID</th>
+                                    <th style="width: 35%;">Nome do arquivo</th>
+                                    <th style="width: 30%;">Data / hora</th>
+                                    <th style="width: 20%;">Tamanho</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="divContent" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+             aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="background-color: #EBEFF2;">
+                    <div class="modal-header">
+                        <h4 class="modal-title mt-0" id="myLargeModalLabel1">Conteúdo</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body" id="innerDiv" style="max-height: 300px; overflow: auto; background-color: white;">
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-9"></div>
+                        <div class="col-sm-3">
+                            <br>
+                            <button id="BTN_DOWNLOAD" class="btn btn-purple btn-rounded waves-effect waves-light"
+                                style="width: 100%;">
+                                Download &nbsp;&nbsp;<i class="mdi mdi-cloud-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/popper.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/waves.js"></script>
+<script src="assets/js/jquery.slimscroll.js"></script>
+
+<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+
+<script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
+<script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
+<script src="assets/plugins/datatables/jszip.min.js"></script>
+<script src="assets/plugins/datatables/pdfmake.min.js"></script>
+<script src="assets/plugins/datatables/vfs_fonts.js"></script>
+<script src="assets/plugins/datatables/buttons.html5.min.js"></script>
+<script src="assets/plugins/datatables/buttons.print.min.js"></script>
+
+<script src="assets/plugins/datatables/dataTables.keyTable.min.js"></script>
+
+<script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
+<script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
+
+<script src="assets/plugins/datatables/dataTables.select.min.js"></script>
+
+<script src="assets/js/jquery.core.js"></script>
+<script src="assets/js/jquery.app.js"></script>
+
+<script src="assets/plugins/fileuploads/js/dropify.min.js"></script>
+
+<script src="scripts/util.js"></script>
+
+<script type="text/javascript">
+
+    const h = parent.$('#iframe1').height() - 222;
+    let grid1;
+    let link;
+
+    const carregaRegistros = () => {
+        const url = '/carregaFiles';
+        const data = {
+            keep: parent.keep
+        };
+
+        const success = function (response) {
+            const data = eval(response);
+            atualizaGrid(data);
+        };
+
+        doranAjax(url, data, success);
+    };
+
+    const atualizaGrid = (data) => {
+        if (grid1) {
+            $('#tbFile').DataTable().clear().destroy();
+            grid1 = undefined;
+        }
+
+        grid1 = $('#tbFile').DataTable({
+            data: data,
+            scrollY: h,
+            searching: true,
+            pageLength: 25,
+            select: {
+                style: 'single'
+            },
+            language: ptBr
+        });
+
+        grid1.on('select', function (e, dt, type, indexes) {
+            if (type === 'row') {
+                
+            }
+        });
+    };
+
+    const uploadFiles = () => {
+        event.preventDefault();
+
+        const data = new FormData();
+
+        const files = $("#csvFile").get(0).files;
+
+        if (files.length == 0) {
+            MensagemDeErro('Selecione 1 ou mais arquivos para fazer o upload');
+            return;
+        }
+
+        if (files.length > 0) {
+            EnableDisableElement('BTN_UPLOAD', false);
+            
+            for (let i = 0; i < files.length; i++){
+                data.append("UploadedFile", files[i]);
+
+                showProcess(true);
+
+                $.ajax({
+                    url: '/doUpload',
+                    data: data,
+                    type: 'POST',
+                    success: function (response) {
+                        EnableDisableElement('BTN_UPLOAD', true);
+
+                        carregaRegistros();
+
+                        if (i == files.length -1) {
+                            $('.dropify-clear').click();
+                            MensagemDeSucesso('O(s) arquivo(s) foram importados com sucesso');
+                        }
+                    },
+                    error: function (request, status, error) {
+                        EnableDisableElement('BTN_UPLOAD', true);
+
+                        MensagemDeErro(request.responseText);
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+        }
+    };
+
+    const deletaFile = (ID_FILE) => {
+        event.preventDefault();
+
+        MensagemDeConfirmacao('Deseja deletar o registro?', function () {
+            const url = '/deletaFile';
+
+            const data = {
+                ID_FILE: ID_FILE,
+                keep: parent.keep
+            };
+
+            const success = function (response) {
+                carregaRegistros();
+            }
+
+            doranAjax(url, data, success);
+        });
+    };
+
+    const downloadContent = (ID_FILE) => {
+        event.preventDefault();
+
+        const url = '/downloadContent';
+
+        const data = {
+            ID_FILE: ID_FILE,
+            keep: parent.keep,
+            sys: parent._id
+        };
+
+        const success = function (response) {
+            const result = JSON.parse(response);
+
+            $('#divContent').modal();
+
+            $('#myLargeModalLabel1').html('Conteúdo');
+            $('#innerDiv').html('');
+
+            attachLink(result.link);
+
+            setTimeout(() => {
+                $('#myLargeModalLabel1').html('Conteúdo de ' + result.name + ' em ' + result.date);
+                $('#innerDiv').html(result.content);
+            }, 1000);
+        }
+
+        doranAjax(url, data, success);
+    };
+
+    const attachLink = (fileName) => {
+        $('#BTN_DOWNLOAD').unbind('click');
+
+        $('#BTN_DOWNLOAD').bind('click', () => {
+            window.open('/csv/' + fileName, '_blank');
+        });
+    };
+
+    $('.dropify').dropify({
+        messages: {
+            'default': 'Arraste e solte os arquivos aqui ',
+            'replace': 'Arraste e solte ou clique para trocar os arquivos',
+            'remove': 'Remover',
+            'error': 'Erro'
+        },
+        error: {
+            'fileSize': 'O tamanho do arquivo está maior que 900Mb.'
+        }
+    });
+
+    $(document).ready(function () {
+        $('#tbFile').css('height', parseInt(h) + 'px');
+
+        carregaRegistros();
+    });
+
+
+</script>
