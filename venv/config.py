@@ -7,7 +7,7 @@ class Config(object):
     DB_SERVER_NAME = "198.199.76.59:3306"
     DB_NAME = "Datamigra"
     DB_USERNAME = "admin"
-    DB_PASSWORD = "100grilo"
+    DB_PASSWORD = "xRun"
 
     ZIP_UPLOADS = "/Users/caioDoran/Documents/Projects/DataDev/csv"
     ZIP_DOWNLOADS = '/Users/caioDoran/Documents/Projects/DataDev/csv'
