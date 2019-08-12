@@ -132,7 +132,7 @@ const getIndexOfColumn = (columnName) => {
 
 let imgAjaxLoader = document.createElement('img');
 
-imgAjaxLoader.setAttribute('src', '/assets/images/preloader3.gif');
+imgAjaxLoader.setAttribute('src', '/app/templates/assets/images/preloader3.gif');
 imgAjaxLoader.style.position = "fixed";
 imgAjaxLoader.style.zIndex = '100001';
 imgAjaxLoader.style.left = 50 + "%";

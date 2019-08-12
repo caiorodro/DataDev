@@ -16,30 +16,30 @@ cwd = os.getcwd()
 
 dataTemplate = Blueprint('dataTemplate', __name__)
 
-@dataTemplate.route('/scripts/<path:path>')
+@dataTemplate.route('/app/templates/scripts/<path:path>')
 def send_scripts(path):
-    return send_from_directory('templates/scripts', path)
+    return send_from_directory('app/templates/scripts', path)
 
-@dataTemplate.route('/css/<path:path>')
+@dataTemplate.route('/app/templates/css/<path:path>')
 def send_css(path):
-    return send_from_directory('templates/css', path)
+    return send_from_directory('app/templates/css', path)
 
-@dataTemplate.route('/csv/<path:filename>', methods=['GET', 'POST'])
+@dataTemplate.route('/app/csv/<path:filename>', methods=['GET', 'POST'])
 def downloadCSV(filename):
-    uploads = '/'.join((cwd, '../csv/'))
+    uploads = '/'.join((cwd, 'app/csv/'))
     return send_from_directory(directory=uploads, filename=filename)
 
-@dataTemplate.route('/assets/<path:path>')
+@dataTemplate.route('/app/templates/assets/<path:path>')
 def send_assets(path):
-    return send_from_directory('templates/assets', path)
+    return send_from_directory('app/templates/assets', path)
 
-@dataTemplate.route('/images/<path:path>')
+@dataTemplate.route('/app/templates/images/<path:path>')
 def send_images(path):
-    return send_from_directory('templates/images', path)
+    return send_from_directory('app/templates/images', path)
 
-@dataTemplate.route('/dist/<path:path>')
+@dataTemplate.route('/app/templates/dist/<path:path>')
 def send_dist(path):
-    return send_from_directory('templates/dist', path)
+    return send_from_directory('app/templates/dist', path)
 
 @dataTemplate.route("/")
 def hello():

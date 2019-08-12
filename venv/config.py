@@ -27,9 +27,9 @@ class DevelopmentConfig(Config):
     DB_SERVER_NAME = "localhost:3306"
     DB_NAME = "Datamigra"
     DB_USERNAME = "root"
-    DB_PASSWORD = "xRun"
+    DB_PASSWORD = "56Runna01"
 
-    ZIP_UPLOADS = "/Users/caioDoran/Documents/Projects/DataDev/csv"
+    ZIP_UPLOADS = "/Users/caioDoran/Documents/Github/DataDev/csv"
 
     SESSION_COOKIE_SECURE = False
 
