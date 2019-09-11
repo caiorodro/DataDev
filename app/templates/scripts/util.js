@@ -158,7 +158,10 @@ const doranAjax = (url, data, success, error, hideProcess) => {
     const xerror = error ? error : function (xhr, status, error) {
         showProcess(false);
         processing = false;
-        parent.MensagemDeErro(JSON.parse(xhr.responseText).Message);
+        const _message = JSON.parse(xhr.responseText).Message ? 
+            JSON.parse(xhr.responseText).Message : JSON.parse(xhr.responseText).message;
+
+        parent.MensagemDeErro(_message);
     };
 
     processing = true;

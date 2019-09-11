@@ -7,6 +7,7 @@ import numpy as np
 from sqlalchemy import text
 from app.base.mapTable import mapCTPS, mapCGIL, mapCAGED, mapRAIS, mapSISMIGRA_ENTRADA, mapSISMIGRA_REGISTRO, mapSTI
 from datetime import datetime
+from werkzeug.exceptions import HTTPException
 
 class viewData(hBase):
 
@@ -90,7 +91,10 @@ class viewData(hBase):
             ADMITIDOS_DESLIGADOS = ADMITIDOS_DESLIGADOS)
 
         if toProceed == 0:
-            return '[[], []]'
+            _message = 'Numero de filtros não permitido'
+            raise HTTPException(_message)
+            return qex.throw(_message)
+            # return '[[], []]'
 
         selectX = []
         selectSerie = []
@@ -200,7 +204,8 @@ class viewData(hBase):
             ADMITIDOS_DESLIGADOS = ADMITIDOS_DESLIGADOS)
 
         if toProceed == 0:
-            return '[]'
+            return qex.throw('Numero de filtros não permitidos')
+            #return '[]'
 
         selectX = []
         selectSerie = []
